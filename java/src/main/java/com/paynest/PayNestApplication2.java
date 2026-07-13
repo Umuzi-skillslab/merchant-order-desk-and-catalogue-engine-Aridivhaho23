@@ -19,12 +19,12 @@ class PayNestApplication2 {
     System.out.println("================================");
 
    //Prompt the user to enter their name
-    System.out.print( "Enter your name:\t");
+    System.out.println( "Enter your name:\t");
     // Read user input
     String name = scanner.nextLine(); 
 
     //Prompt the user to enter their email
-    System.out.print("Enter your email:\t");
+    System.out.println("Enter your email:\t");
     // Read user input
     String email = scanner.nextLine();
 
@@ -43,15 +43,15 @@ class PayNestApplication2 {
     do {
 
         // Product name
-        System.out.print("Enter your product name: ");
+        System.out.println("Enter your product name: ");
         String productName = scanner.nextLine();
 
         // Product price
-        System.out.print("Enter your product price: ");
+        System.out.println("Enter your product price: ");
         double productPrice = scanner.nextDouble();
 
         // Quantity
-        System.out.print("Enter quantity: ");
+        System.out.println("Enter quantity: ");
         int quantity = scanner.nextInt();
         scanner.nextLine(); //consume newline
 
@@ -65,7 +65,7 @@ class PayNestApplication2 {
         orderService.addProductsToOrder(order, product, quantity);
 
         //Ask whether to continue
-        System.out.print("Do you want to add another product? (Y/N): ");
+        System.out.println("Do you want to add another product? (Y/N): ");
         choice = scanner.nextLine();
 
     } while (choice.equalsIgnoreCase("Y"));

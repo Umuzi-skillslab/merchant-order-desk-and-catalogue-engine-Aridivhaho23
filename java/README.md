@@ -196,57 +196,88 @@ BUILD SUCCESS
 ## Example Output
 
 ```
-=============================
-        PAYNEST STORE
-=============================
+[INFO] [stdout] ================================
+[INFO] [stdout]         PAYNEST STORE
+[INFO] [stdout] ================================
+[INFO] [stdout] 2 x Laptop added successfully.
+[INFO] [stdout] 1 x Phone added successfully.
+[INFO] [stdout] 3 x Tablet added successfully.
+[INFO] [stdout] 
 
-Enter your name:
-John Smith
+                ==================================
+[INFO] [stdout]         ORDER SUMMARY
+[INFO] [stdout] ==================================
+[INFO] [stdout] Order Summary           PayNest
+[INFO] [stdout] Order ID:               1
+[INFO] [stdout] __________________________________
 
-Enter your email:
-john@example.com
+[INFO] [stdout] Customer ID:            1
+[INFO] [stdout] Customer Name:          Aridivhaho23
+[INFO] [stdout] __________________________________
 
-Available Products
-
-1. Laptop     R12000.00
-2. Mouse      R350.00
-
-Select Product:
-1
-
-Enter Quantity:
-2
-
-Add another product? (Y/N):
-Y
-
-Select Product:
-2
-
-Enter Quantity:
-3
-
-=============================
-        ORDER SUMMARY
-=============================
-
-Customer:
-John Smith
-john@example.com
-
-Laptop
-Quantity: 2
-Subtotal: R24000.00
-
-Mouse
-Quantity: 3
-Subtotal: R1050.00
-
------------------------------
-Grand Total: R25050.00
-=============================
+[INFO] [stdout] Order Items:
+[INFO] [stdout] Product    Quantity   Total Price
+[INFO] [stdout] Laptop     2          R   39,98
+[INFO] [stdout] Phone      1          R   29,99
+[INFO] [stdout] Tablet     3          R  119,97
+[INFO] [stdout] Total Price exc. VAT:   R189,94
+[INFO] [stdout] 
+VAT (15%):                              R28,49
+[INFO] [stdout] 
+Total Price incl. VAT:                  R218,43
 ```
 
+## Example Output 2(Try it yourself)
+
+```
+[INFO] [stdout] ================================
+[INFO] [stdout]         PAYNEST STORE
+[INFO] [stdout] ================================
+[INFO] [stdout] Enter your name:
+Ari
+[INFO] [stdout] Enter your email:
+arinemadodzi@gmail.com
+[INFO] [stdout] Enter your product name: 
+laptop
+[INFO] [stdout] Enter your product price: 
+1200
+[INFO] [stdout] Enter quantity: 
+2
+[INFO] [stdout] 2 x laptop added successfully.
+[INFO] [stdout] Do you want to add another product? (Y/N): 
+y
+[INFO] [stdout] Enter your product name: 
+phone
+[INFO] [stdout] Enter your product price: 
+1400
+[INFO] [stdout] Enter quantity: 
+2
+[INFO] [stdout] 2 x phone added successfully.
+[INFO] [stdout] Do you want to add another product? (Y/N): 
+n
+[INFO] [stdout] 
+
+               ==================================
+[INFO] [stdout]         ORDER SUMMARY
+[INFO] [stdout] ==================================
+[INFO] [stdout] Order Summary           PayNest
+[INFO] [stdout] Order ID:               111
+[INFO] [stdout] __________________________________
+
+[INFO] [stdout] Customer ID:            2
+[INFO] [stdout] Customer Name:          Ari
+[INFO] [stdout] __________________________________
+
+[INFO] [stdout] Order Items:
+[INFO] [stdout] Product    Quantity   Total Price
+[INFO] [stdout] laptop     2          R 2400,00
+[INFO] [stdout] phone      2          R 2800,00
+[INFO] [stdout] Total Price exc. VAT:   R5200,00
+[INFO] [stdout] 
+VAT (15%):                              R780,00
+[INFO] [stdout] 
+Total Price incl. VAT:                  R5980,00
+```
 ---
 
 ## Business Rules
