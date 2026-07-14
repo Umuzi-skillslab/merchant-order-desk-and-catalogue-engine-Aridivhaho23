@@ -65,6 +65,8 @@ class PayNestApplication2 {
         orderService.addProductsToOrder(order, product, quantity);
 
         //Ask whether to continue
+        System.out.println();
+        System.out.println("Y to add another product, N to finish: ");
         System.out.println("Do you want to add another product? (Y/N): ");
         choice = scanner.nextLine();
 

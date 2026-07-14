@@ -90,12 +90,16 @@ public class Order
                     orderItem.calculateTotalPrice());
         }
 
+        System.out.println("==================================");
         //Displaying the total price of the order
-        System.out.println("Total Price exc. VAT:\tR" + String.format("%.2f", calculateAllTotalPrice()));
+        System.out.println("Total Price:\t\tR " + String.format("%.2f", calculateAllTotalPrice()));
         //Displaying the VAT amount
-        System.out.println("\nVAT (15%): \t\t\t\tR" + String.format("%.2f", calculateAllTotalPrice() * VAT_RATE));
+        System.out.println("VAT (15%):\t\tR " + String.format("%.2f", calculateAllTotalPrice() * VAT_RATE));
         //Displaying the total price including VAT
-        System.out.println("\nTotal Price incl. VAT: \t\t\tR" + String.format("%.2f", calculateAllTotalPrice() * (1 + VAT_RATE))); 
+        System.out.println("==================================\n");
+        System.out.println("Grand Total:\t\tR " + String.format("%.2f", calculateAllTotalPrice() * (1 + VAT_RATE))); 
 
+        //Code above demonstrates to ways of formatting the output one using tab counts(\t) and the other using
+        //format specifiers.
     }
 }

@@ -162,13 +162,22 @@ git clone <repository-url>
 
 ```bash
 cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
+cd java
 ```
 
 ### Compile the project
 
 ```bash
 mvn clean compile
+
 ```
+## Execute all unit tests using:
+
+```bash
+mvn test
+```
+There is no test as yet so code will run as test is included in later stages when transaction and risky concepts are introduced
+
 ### Run the application
 
 ```bash
@@ -178,12 +187,6 @@ mvn exec:java
 ---
 
 ## Running the Tests
-
-Execute all unit tests using:
-
-```bash
-mvn test
-```
 
 A successful build should display:
 
@@ -220,7 +223,7 @@ BUILD SUCCESS
 [INFO] [stdout] Laptop     2          R   39,98
 [INFO] [stdout] Phone      1          R   29,99
 [INFO] [stdout] Tablet     3          R  119,97
-[INFO] [stdout] Total Price exc. VAT:   R189,94
+[INFO] [stdout] Total Price exc. VAT: R  189,94
 [INFO] [stdout] 
 VAT (15%):                              R28,49
 [INFO] [stdout] 
@@ -272,7 +275,8 @@ n
 [INFO] [stdout] Product    Quantity   Total Price
 [INFO] [stdout] laptop     2          R 2400,00
 [INFO] [stdout] phone      2          R 2800,00
-[INFO] [stdout] Total Price exc. VAT:   R5200,00
+
+[INFO] [stdout] Total Price exc. VAT: R 5200,00
 [INFO] [stdout] 
 VAT (15%):                              R780,00
 [INFO] [stdout] 
