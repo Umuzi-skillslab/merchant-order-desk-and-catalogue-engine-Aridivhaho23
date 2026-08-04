@@ -6,7 +6,7 @@
 
   <groupId>com.paynest</groupId>
   <artifactId>java</artifactId>
-  <version>y</version>
+  <version>0.0.1-SNAPSHOT</version>
 
   <name>java</name>
   <!-- FIXME change it to the project's website -->
@@ -14,15 +14,17 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <maven.compiler.source>17</maven.compiler.source>
-    <maven.compiler.target>17</maven.compiler.target>
+    <!-- Use the release flag for strict cross-compilation checks -->
+    <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
   <dependencies>
+    <!-- JUnit 5 (Jupiter): project brief requires JUnit 5, previous JUnit 4
+         dependency removed so `mvn test` runs the new Jupiter test suite. -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.11</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.10.2</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -45,8 +47,9 @@
           <version>3.8.0</version>
         </plugin>
         <plugin>
+          <!-- 3.x has native JUnit 5 support (no vintage engine needed) -->
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.22.1</version>
+          <version>3.2.5</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
@@ -74,7 +77,8 @@
             <artifactId>exec-maven-plugin</artifactId>
             <version>3.6.3</version>
             <configuration>
-                <mainClass>com.paynest.PayNestApplication</mainClass>
+                <!-- Single entry point now lives under com.paynest.app -->
+                <mainClass>com.paynest.app.PayNestApplication</mainClass>
             </configuration>
         </plugin>    
       </plugins>
