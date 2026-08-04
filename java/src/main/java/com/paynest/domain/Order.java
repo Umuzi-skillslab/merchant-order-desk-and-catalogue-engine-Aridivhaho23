@@ -75,7 +75,7 @@ public class Order {
         return calculateAllTotalPrice().add(calculateVat()).setScale(2, RoundingMode.HALF_UP);
     }
 
-/* @return the order summary as a String */
+ /* @return the order summary as a String */
     public String buildSummary() {
         StringBuilder summary = new StringBuilder();
         summary.append("\n==================================================\n");
@@ -94,10 +94,14 @@ public class Order {
             summary.append("(no items on this order)");
         } else {
             for (OrderItem item : orderItems) {
-                summary.append(String.format("%-10s %-10d R%8.2f%n",
+                // Format the BigDecimal safely for printing (avoid passing BigDecimal into %f)
+                String priceStr = item.calculateTotalPrice()
+                                      .setScale(2, RoundingMode.HALF_UP)
+                                      .toPlainString();
+                summary.append(String.format("%-10s %-10d R%8s%n",
                         item.getProduct().getName(),
                         item.getQuantity(),
-                        item.calculateTotalPrice()));
+                        priceStr));
             }
         }
 

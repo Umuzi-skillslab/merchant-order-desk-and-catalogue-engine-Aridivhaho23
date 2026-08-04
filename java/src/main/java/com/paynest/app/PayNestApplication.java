@@ -1,6 +1,7 @@
 package com.paynest.app;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +13,7 @@ import com.paynest.service.OrderService;
 
 /**
  * Main entry point for the PayNest application.
- * Demonstrates the core commerce flow (Capstone 1) and payment processing (Capstone 2).
+ * Demonstrates the core commerce flow (Capstone 1).
  */
 public final class PayNestApplication {
 
@@ -71,8 +72,9 @@ public final class PayNestApplication {
     private static void printCatalogue(List<Product> catalogue) {
         System.out.println("\nAvailable products:");
         for (Product p : catalogue) {
-            System.out.printf("  [%d] %-10s R%8.2f (stock: %d)%n",
-                    p.getId(), p.getName(), p.getPrice(), p.getStock());
+            String priceStr = p.getPrice().setScale(2, RoundingMode.HALF_UP).toPlainString();
+            System.out.printf("  [%d] %-10s R%8s (stock: %d)%n",
+                    p.getId(), p.getName(), priceStr, p.getStock());
         }
         System.out.println();
     }
@@ -84,6 +86,10 @@ public final class PayNestApplication {
     private static Customer createCustomer() {
         for (String attempt : CUSTOMER_ATTEMPTS) {
             String[] parts = attempt.split(",", 2);
+            if (parts.length < 2) {
+                System.out.println("Invalid customer entry (malformed): " + attempt + " — skipping.");
+                continue;
+            }
             String name = parts[0];
             String email = parts[1];
             try {
@@ -107,6 +113,11 @@ public final class PayNestApplication {
     private static void addRequestedItem(OrderService orderService, Order order,
                                           List<Product> catalogue, String request) {
         String[] parts = request.split(",", 2);
+        if (parts.length < 2) {
+            System.out.println("Could not add item (" + request + "): malformed request string.");
+            return;
+        }
+
         int productId;
         int quantity;
 

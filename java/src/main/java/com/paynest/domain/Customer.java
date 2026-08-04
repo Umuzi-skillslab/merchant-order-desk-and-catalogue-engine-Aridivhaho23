@@ -53,4 +53,10 @@ public class Customer {
         return "Customer ID: \t\t\t\t" + customerId + System.lineSeparator()
                 + "Customer Name: \t\t" + name;
     }
+
+    // Test helper: reset the id counter for deterministic tests.
+    // package-private (no modifier) so it can be used from tests in the same package.
+    static void resetNextIdForTests(int startValue) {
+        nextId = startValue;
+    }
 }

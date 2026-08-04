@@ -80,8 +80,19 @@
                 <!-- Single entry point now lives under com.paynest.app -->
                 <mainClass>com.paynest.app.PayNestApplication</mainClass>
             </configuration>
-        </plugin>    
+        </plugin>
       </plugins>
     </pluginManagement>
+
+    <!-- Add the exec plugin into <plugins> so mvn exec:java uses our configured mainClass -->
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <mainClass>com.paynest.app.PayNestApplication</mainClass>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
