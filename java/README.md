@@ -1,36 +1,10 @@
-# Merchant-order-desk-and-catalogue-engine
-# PayNest E-Commerce Order Management System
+# PayNest — Merchant Order Desk and Catalogue Engine
 
 ## Overview
 
-PayNest is a simple Java console-based e-commerce application developed as part of a capstone project. The application demonstrates the core principles of Object-Oriented Programming (OOP) by modelling a basic online shopping process. Customers can create an order, add products with quantities, and receive an order summary displaying line subtotals, VAT, and a grand total.
-
-The project focuses on encapsulation, class relationships, data validation, and clean code practices while following standard Java development conventions.
-
----
-
-## Features
-
-* Create products with an id, name, price and stock level (price/stock validated, cannot be negative).
-* Create customer profiles with an id, name and a validated email address.
-* Create customer orders.
-* Add multiple products to an order, including quantities greater than one.
-* Calculate line subtotals and the overall order total (excl. and incl. 15% VAT) using `BigDecimal`.
-* Display a formatted order summary.
-* Validate all input (product id, quantity, name, email) and report a friendly message instead of crashing when it's invalid.
-* Demonstrate Object-Oriented Programming concepts: encapsulation, composition, separation of concerns.
-
----
-
-## Technologies Used
-
-* Java 21
-* Maven
-* JUnit 5 (Jupiter)
-* Visual Studio Code
-* Git and GitHub
-
----
+A minimal Java commerce kernel for PayNest, an early-stage South African
+fintech: products with prices, customers, orders with line items, and a
+trustworthy order total printed as a human-readable summary.
 
 ## Project Structure
 
@@ -58,6 +32,29 @@ merchant-order-desk-and-catalogue-engine-Aridivhaho23/
 └── README.md
 ```
 
+## Features
+
+* Create products with an id, name, price and stock level (price/stock validated, cannot be negative).
+* Create customer profiles with an id, name and a validated email address.
+* Create customer orders.
+* Add multiple products to an order, including quantities greater than one.
+* Calculate line subtotals and the overall order total (excl. and incl. 15% VAT) using `BigDecimal`.
+* Display a formatted order summary.
+* Validate all input (product id, quantity, name, email) and report a friendly message instead of crashing when it's invalid.
+* Demonstrate Object-Oriented Programming concepts: encapsulation, composition, separation of concerns.
+
+---
+
+## Technologies Used
+
+* Java 21
+* Maven
+* JUnit 5 (Jupiter)
+* Visual Studio Code
+* Git and GitHub
+
+---
+
 ---
 
 ## Class Responsibilities
@@ -78,7 +75,7 @@ Represents one line within an order (a `Product` + a `quantity`). Calculates the
 
 Represents a customer's order: id, `Customer`, and its list of `OrderItem`s. The item list is only exposed as a **read-only** view (`Collections.unmodifiableList`) so callers cannot corrupt totals by mutating it directly. Computes the grand total, VAT, and total incl. VAT, and builds a summary **String** (it does not print — see Business Rules below).
 
-### OrderService (`service`)
+### OrderService (`domain`)
 
 Adds products to an order, including the stock check. Never prints to the console: it either succeeds or throws (`IllegalArgumentException` / `InsufficientStockException`) so the caller decides how to present the outcome.
 
@@ -88,79 +85,72 @@ The single entry point. Runs unattended (no console input) using a set of pre-wr
 
 ---
 
-## How to Run the Application
-
-### Clone the repository
-
-```bash
-git clone <repository-url>
-```
-
-### Navigate to the project
-
-```bash
-cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
-cd java
-```
-
-### Compile the project
+## How to Run
 
 ```bash
 mvn clean compile
-```
-
-## Running the Tests
-
-Execute all unit tests using:
-
-```bash
-mvn test
-```
-
-### Run the application
-
-```bash
 mvn exec:java
 ```
 
-This runs `com.paynest.app.PayNestApplication`, which prints a sample product catalogue, then works through a set of **pre-written** customer details and add-to-order requests (no console input required). A few of the pre-written entries are deliberately invalid (a bad email, a request over stock, an unknown product id, a non-numeric quantity) so the run also demonstrates the validation/error-handling paths — each is reported with a friendly message instead of crashing the program. It finishes by printing the order summary.
+This builds a small catalogue (Laptop, Wireless Mouse), one customer, and
+one order with two line items (one with quantity > 1). It also deliberately
+attempts to over-order stock once, to show that validation fails loudly
+with a clear message instead of corrupting the total, then prints the
+order summary — customer, each line, subtotal, VAT, and grand total.
 
----
-
-## Running the Tests
-
-Execute all unit tests using:
+## How to Test
 
 ```bash
 mvn test
 ```
 
-A successful build should display:
+Tests cover: `Product`/`Customer` validation (negative price, blank name,
+invalid email), line and grand totals across multiple items, VAT,
+non-positive quantity rejection, stock reduction, an empty order, an
+unmodifiable order-items list, and — most importantly — that
+`Order.addItem()` enforces the stock check even when called directly,
+without going through `OrderService`.
 
-```text
-BUILD SUCCESS
-```
+## Business Rules
 
-Tests cover: product/customer validation (negative price, blank name, invalid email), order-item line totals, order grand-total/VAT calculations (including an empty order), encapsulation (the order-items list rejects direct mutation), and `OrderService` stock handling (successful add, insufficient stock, invalid quantity).
+- Money (`Product.price`, line totals, VAT, grand total) is `BigDecimal`,
+  not `double`. The starter brief's default is `double` arithmetic, but
+  `double` can silently misrepresent currency (e.g. `0.1 + 0.2 != 0.3`).
+  `BigDecimal` with `HALF_UP` rounding to 2 decimal places is used instead,
+  documenting the deviation as the brief allows ("document any rounding
+  policy if you introduce one").
+- Rounding happens once, at the line level (`OrderItem.calculateTotal()`),
+  so the grand total is always the exact sum of what's printed per line —
+  no drift between the displayed lines and the displayed total.
+- Quantities added to an order must be greater than zero.
+- Stock cannot go negative; an order that would oversell a product is
+  rejected with `InsufficientStockException`, not silently truncated.
+- `Order.getItems()` returns an unmodifiable list — callers cannot corrupt
+  the order total by mutating the backing collection directly.
+
+## Why the Design Extends Cleanly
+
+`OrderItem` only reads `product.getPrice()`; `Order` only reads
+`OrderItem.calculateTotal()`. Neither ever reaches into `Product`'s other
+fields. That means adding a new `Product` field (e.g. `sku`, `category`)
+touches zero lines in `OrderItem`, `Order`, or checkout — the domain model
+was built around that boundary specifically so catalogue changes and order
+logic never have to change together.
+
+The stock-check invariant lives in `Order.addItem()` itself — not in
+`OrderService` — and `Product.reduceStock()` / the `OrderItem` constructor
+are package-private, so nothing outside `domain` can bypass the check or
+construct an inconsistent line item. `OrderService` is a thin coordination
+layer over `Order`, not where the business rule is enforced; this is what
+lets a future caller (a REST controller, a batch importer, another
+service) reuse `Order` safely without re-implementing the stock check.
+
+## Diagram
+
+*(Optional but valued per the brief — a sequence diagram of
+`OrderService → Order.addItem → OrderItem → printSummary` can be added
+here, e.g. as a Mermaid `sequenceDiagram` block.)*
 ```
-Ouput Sample:
-[INFO] [stdout] ================================
-[INFO] [stdout]         PAYNEST STORE
-[INFO] [stdout] ================================
-[INFO] [stdout] 
-Available products:
-[INFO] [stdout]   [1] Laptop     R   19,99 (stock: 100)
-[INFO] [stdout]   [2] Phone      R   29,99 (stock: 50)
-[INFO] [stdout]   [3] Tablet     R   39,99 (stock: 75)
-[INFO] [stdout] 
-[INFO] [stdout] Invalid customer details (Aridivhaho23,not-an-email): Customer email is not a valid email address: not-an-email Trying next entry.
-[INFO] [stdout] 2 x Laptop added successfully.
-[INFO] [stdout] 1 x Phone added successfully.
-[INFO] [stdout] 3 x Tablet added successfully.
-[INFO] [stdout] Could not add item (2,999): Insufficient stock for Phone (requested 999, available 49).
-[INFO] [stdout] Could not add item (9,1): no product with id 9.
-[INFO] [stdout] Could not add item (3,abc): "abc" is not a valid whole number.
-[INFO] [stdout] 
 ==================================================
         ORDER SUMMARY
 ==================================================

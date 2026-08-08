@@ -8,13 +8,20 @@ import java.util.List;
 import java.util.Objects;
 
 public class Order {
+
+/**
+ * @param id the unique identifier for this order
+ * @param customer the person placing the order
+ */
     private final int id;
     private final Customer customer;
     private final List<OrderItem> items = new ArrayList<>();
     private static final BigDecimal VAT_RATE = new BigDecimal("0.15");
 
     public Order(int id, Customer customer) {
-        if (id <= 0) throw new IllegalArgumentException("id must be positive.");
+        if (id <= 0) {
+            throw new IllegalArgumentException("id must be positive.");
+        }
         this.id = id;
         this.customer = Objects.requireNonNull(customer, "customer cannot be null.");
     }
@@ -33,7 +40,9 @@ public class Order {
     public void addItem(Product product, int quantity) {
         Objects.requireNonNull(product, "product cannot be null.");
 
-        if (quantity <= 0) throw new IllegalArgumentException("quantity must be > 0.");
+        if (quantity <= 0) {
+                throw new IllegalArgumentException("quantity must be > 0.");
+            }
         if (quantity > product.getStock()){
             throw new InsufficientStockException(product, quantity);
         }
@@ -59,9 +68,8 @@ public String printSummary() {
     strib.append("Order #").append(id).append(" — ").append(customer.getName()).append('\n');
     strib.append("Order Items:\n");
     // Header
-    strib.append(String.format("\n%-20s %-10s %12s%n","Product", "Quantity", "Total Price"));
+    strib.append(String.format("  %-20s %-10s %12s%n","Product", "Quantity", "Total Price"));
 
-    strib.append("");
     if (items.isEmpty()) {
         strib.append("  (no items)\n");
     } else {
