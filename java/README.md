@@ -18,9 +18,9 @@ merchant-order-desk-and-catalogue-engine-Aridivhaho23/
 │   │   │   ├── Customer.java
 │   │   │   ├── OrderItem.java
 │   │   │   └── Order.java
+│   │   │   └── InsufficientStockException.java
 │   │   ├── service/
 │   │   │   ├── OrderService.java
-│   │   │   └── InsufficientStockException.java
 │   │   └── app/
 │   │       └── PayNestApplication.java
 │   │
@@ -75,7 +75,11 @@ Represents one line within an order (a `Product` + a `quantity`). Calculates the
 
 Represents a customer's order: id, `Customer`, and its list of `OrderItem`s. The item list is only exposed as a **read-only** view (`Collections.unmodifiableList`) so callers cannot corrupt totals by mutating it directly. Computes the grand total, VAT, and total incl. VAT, and builds a summary **String** (it does not print — see Business Rules below).
 
+<<<<<<< HEAD
 ### OrderService (`domain`)
+=======
+### InsufficientStockException (`domain`)
+>>>>>>> 2755524d6527fcb79589f840973615bbb7027e13
 
 Adds products to an order, including the stock check. Never prints to the console: it either succeeds or throws (`IllegalArgumentException` / `InsufficientStockException`) so the caller decides how to present the outcome.
 
@@ -113,6 +117,7 @@ without going through `OrderService`.
 
 ## Business Rules
 
+<<<<<<< HEAD
 - Money (`Product.price`, line totals, VAT, grand total) is `BigDecimal`,
   not `double`. The starter brief's default is `double` arithmetic, but
   `double` can silently misrepresent currency (e.g. `0.1 + 0.2 != 0.3`).
@@ -151,14 +156,17 @@ service) reuse `Order` safely without re-implementing the stock check.
 `OrderService → Order.addItem → OrderItem → printSummary` can be added
 here, e.g. as a Mermaid `sequenceDiagram` block.)*
 ```
+=======
+Tests cover: product/customer validation (negative price, blank name, invalid email), order-item line totals, order grand-total/VAT calculations (including an empty order), encapsulation (the order-items list rejects direct mutation), and `OrderService` stock handling (successful add, insufficient stock, invalid quantity).
+
+>>>>>>> 2755524d6527fcb79589f840973615bbb7027e13
 ==================================================
         ORDER SUMMARY
 ==================================================
 Order Summary                           PayNest
 Order ID:                               903
-__________________________________________________
-
-Customer ID:                            1
+_________________________________________________
+Customer ID:                            1#
 [INFO] [stdout] Customer Name:          Aridivhaho23
 __________________________________________________
 
