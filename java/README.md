@@ -90,6 +90,20 @@ The single entry point. Runs unattended (no console input) using a set of pre-wr
 ---
 
 ## How to Run
+## How to Run the Application
+
+### Clone the repository
+
+```bash
+git clone <repository-url>
+```
+
+### Navigate to the project
+
+```bash
+cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
+cd java
+```
 
 ```bash
 mvn clean compile
