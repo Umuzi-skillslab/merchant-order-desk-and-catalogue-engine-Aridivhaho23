@@ -2,61 +2,44 @@ package com.paynest.domain;
 
 import java.util.regex.Pattern;
 
+/** The person placing an order. */
 public class Customer {
 
+/**
+ * @param id the unique identifier for the customer
+ * @param name the customer's name
+ * @param email the customer's email address
+ */
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
 
-    private final int customerId;
+    private final int id;
     private final String name;
     private final String email;
 
-    // Auto-incrementing id counter shared across all Customer instances.
-    private static int nextId = 1;
-
-    /**
-     * Creates a new customer.
-     *
-     * @param id    unique identifier for the customer
-     * @param name  full name of the customer
-     * @param email email address for contact
-     */
-
-    public Customer(String name, String email) {
-        // --- name must be present ---
+    public Customer(int id, String name, String email) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("id must be positive.");
+        }
         if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Customer name cannot be null or blank.");
+            throw new IllegalArgumentException("name cannot be blank.");
         }
-        // --- email must be present and well-formed (this was the gap flagged in feedback) ---
         if (email == null || !EMAIL_PATTERN.matcher(email.trim()).matches()) {
-            throw new IllegalArgumentException("Customer email is not a valid email address: " + email);
+            throw new IllegalArgumentException("email is not valid: " + email);
         }
 
+        this.id = id;
         this.name = name.trim();
         this.email = email.trim();
-        this.customerId = nextId++;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
     }
 
     public int getId() {
-        return customerId;
+        return id;
     }
-
-    public String describe() {
-        return "Customer ID: \t\t\t\t" + customerId + System.lineSeparator()
-                + "Customer Name: \t\t" + name;
+    public String getName() {
+        return name;
     }
-
-    // Test helper: reset the id counter for deterministic tests.
-    // package-private (no modifier) so it can be used from tests in the same package.
-    static void resetNextIdForTests(int startValue) {
-        nextId = startValue;
+    public String getEmail() {
+        return email;
     }
 }

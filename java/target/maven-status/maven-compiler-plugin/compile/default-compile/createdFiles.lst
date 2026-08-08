@@ -1,7 +1,7 @@
 com\paynest\domain\Order.class
 com\paynest\domain\Product.class
-com\paynest\service\InsufficientStockException.class
 com\paynest\service\OrderService.class
 com\paynest\domain\OrderItem.class
 com\paynest\domain\Customer.class
+com\paynest\domain\InsufficientStockException.class
 com\paynest\app\PayNestApplication.class

@@ -5,112 +5,83 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class Order {
-
-    private final int orderId;
+    private final int id;
     private final Customer customer;
-    private final List<OrderItem> orderItems;
-
+    private final List<OrderItem> items = new ArrayList<>();
     private static final BigDecimal VAT_RATE = new BigDecimal("0.15");
 
-   /**
-     * Creates a new order for the given customer.
-     *
-     * @param id       unique identifier for the order
-     * @param customer the customer placing the order
-     */
-    public Order(int orderId, Customer customer) {
-        if (orderId <= 0) {
-            throw new IllegalArgumentException("Order id must be a positive number.");
-        }
-        if (customer == null) {
-            throw new IllegalArgumentException("Order must belong to a customer.");
-        }
-        this.orderId = orderId;
-        this.customer = customer;
-        this.orderItems = new ArrayList<>();
+    public Order(int id, Customer customer) {
+        if (id <= 0) throw new IllegalArgumentException("id must be positive.");
+        this.id = id;
+        this.customer = Objects.requireNonNull(customer, "customer cannot be null.");
     }
 
-    public int getOrderId() {
-        return orderId;
+    public int getId() {
+        return id;
     }
-
     public Customer getCustomer() {
         return customer;
     }
-
-    //Read only view of the order items, so external callers can't modify the list directly.
-    public List<OrderItem> getOrderItems() {
-        return Collections.unmodifiableList(orderItems);
+    public List<OrderItem> getItems() {
+        return Collections.unmodifiableList(items);
     }
 
-    /**
-     * Adds a product to the order with the specified quantity.
-     *
-     * @param product  the product to add
-     * @param quantity the number of units
-     */
-    public void addOrderItem(Product product, int quantity) {
-        orderItems.add(new OrderItem(product, quantity));
-    }
+    /** The single path for adding a line. Validates, checks stock, reduces stock — atomically. */
+    public void addItem(Product product, int quantity) {
+        Objects.requireNonNull(product, "product cannot be null.");
 
-    /** Sum of all line subtotals (excl. VAT). 
-     *  @return the total amount
-    */
-    public BigDecimal calculateAllTotalPrice() {
-        // Start with zero and add each line's total price to it.
-        BigDecimal total = BigDecimal.ZERO;
-        for (OrderItem item : orderItems) {
-            total = total.add(item.calculateTotalPrice());
+        if (quantity <= 0) throw new IllegalArgumentException("quantity must be > 0.");
+        if (quantity > product.getStock()){
+            throw new InsufficientStockException(product, quantity);
         }
-        return total.setScale(2, RoundingMode.HALF_UP);
+        // only Order can do this — package-private
+        product.reduceStock(quantity);
+        items.add(new OrderItem(product, quantity));
+    }
+
+    public BigDecimal calculateAllTotal() {
+        return items.stream()
+                .map(OrderItem::calculateTotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .setScale(2, RoundingMode.HALF_UP);
     }
 
     public BigDecimal calculateVat() {
-        return calculateAllTotalPrice().multiply(VAT_RATE).setScale(2, RoundingMode.HALF_UP);
+        return calculateAllTotal().multiply(VAT_RATE).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public BigDecimal calculateTotalWithVat() {
-        return calculateAllTotalPrice().add(calculateVat()).setScale(2, RoundingMode.HALF_UP);
-    }
+public String printSummary() {
+    StringBuilder strib = new StringBuilder();
 
- /* @return the order summary as a String */
-    public String buildSummary() {
-        StringBuilder summary = new StringBuilder();
-        summary.append("\n==================================================\n");
-        summary.append("\tORDER SUMMARY\n");
-        summary.append("==================================================\n");
-        summary.append("Order Summary\t\t\t\tPayNest\n");
-        summary.append("Order ID: \t\t\t\t").append(orderId).append('\n');
-        summary.append("__________________________________________________\n\n");
-        summary.append(customer.describe()).append('\n');
-        summary.append("__________________________________________________\n\n");
-        summary.append("Order Items:\n");
-        summary.append(String.format("%-10s %-10s %8s%n", "\t\tProduct", "Quantity", "Total Price"));
-        summary.append("---------------------------------\n\t\t");
+    strib.append("Order #").append(id).append(" — ").append(customer.getName()).append('\n');
+    strib.append("Order Items:\n");
+    // Header
+    strib.append(String.format("\n%-20s %-10s %12s%n","Product", "Quantity", "Total Price"));
 
-        if (orderItems.isEmpty()) {
-            summary.append("(no items on this order)");
-        } else {
-            for (OrderItem item : orderItems) {
-                // Format the BigDecimal safely for printing (avoid passing BigDecimal into %f)
-                String priceStr = item.calculateTotalPrice()
-                                      .setScale(2, RoundingMode.HALF_UP)
-                                      .toPlainString();
-                summary.append(String.format("%-10s %-10d R%8s%n",
-                        item.getProduct().getName(),
-                        item.getQuantity(),
-                        priceStr));
-            }
+    strib.append("");
+    if (items.isEmpty()) {
+        strib.append("  (no items)\n");
+    } else {
+        for (OrderItem item : items) {
+            strib.append(String.format(
+                "  %-20s %-10d R%11.2f%n",
+                item.getProduct().getName(),
+                item.getQuantity(),
+                item.calculateTotal()
+            ));
         }
-
-        summary.append("===============================\n");
-        summary.append("Total Price exc. VAT:\t\t\tR").append(calculateAllTotalPrice()).append('\n');
-        summary.append("VAT (15%): \t\t\t\tR").append(calculateVat()).append('\n');
-
-        summary.append("================================================\n");
-        summary.append("Total Price incl. VAT: \t\t\tR").append(calculateTotalWithVat()).append('\n');
-        return summary.toString();
     }
+
+    BigDecimal total = calculateAllTotal();
+    BigDecimal vat = calculateVat();
+
+    strib.append(String.format("  %-20s R%11.2f%n", "Subtotal:", total));
+    strib.append(String.format("  %-20s R%11.2f%n", "VAT (15%):", vat));
+    strib.append(String.format("  %-20s R%11.2f%n", "Total:", total.add(vat)));
+
+    return strib.toString();
+}
 }

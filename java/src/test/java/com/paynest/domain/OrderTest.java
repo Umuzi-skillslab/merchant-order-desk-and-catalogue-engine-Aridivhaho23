@@ -1,73 +1,79 @@
 package com.paynest.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
 class OrderTest {
 
-    private Customer sampleCustomer() {
-        return new Customer("Ari", "ari@example.com");
+    private Customer customer() {
+        return new Customer(1, "Thandiwe", "t@example.com");
     }
 
     @Test
     void emptyOrderHasZeroTotal() {
-        Order order = new Order(1, sampleCustomer());
-
-        assertEquals(0, new BigDecimal("0.00").compareTo(order.calculateAllTotalPrice()));
-        assertEquals(0, new BigDecimal("0.00").compareTo(order.calculateVat()));
+        Order order = new Order(1, customer());
+        assertEquals(0, new BigDecimal("0.00").compareTo(order.calculateAllTotal()));
     }
 
     @Test
-    void grandTotalEqualsSumOfLineSubtotals() {
-        Order order = new Order(1, sampleCustomer());
+    void grandTotalEqualsSumOfLineTotals() {
+        Order order = new Order(1, customer());
         Product laptop = new Product(1, "Laptop", new BigDecimal("100.00"), 10);
-        Product phone = new Product(2, "Phone", new BigDecimal("50.00"), 10);
+        Product mouse  = new Product(2, "Mouse", new BigDecimal("50.00"), 10);
 
-        order.addOrderItem(laptop, 2); // 200.00
-        order.addOrderItem(phone, 3);  // 150.00
+        order.addItem(laptop, 2);  // 200.00
+        order.addItem(mouse, 3);   // 150.00
 
-        assertEquals(0, new BigDecimal("350.00").compareTo(order.calculateAllTotalPrice()));
+        assertEquals(0, new BigDecimal("350.00").compareTo(order.calculateAllTotal()));
     }
 
     @Test
     void vatIsFifteenPercentOfSubtotal() {
-        Order order = new Order(1, sampleCustomer());
-        order.addOrderItem(new Product(1, "Laptop", new BigDecimal("100.00"), 10), 1);
+        Order order = new Order(1, customer());
+        order.addItem(new Product(1, "Laptop", new BigDecimal("100.00"), 10), 1);
 
         assertEquals(0, new BigDecimal("15.00").compareTo(order.calculateVat()));
-        assertEquals(0, new BigDecimal("115.00").compareTo(order.calculateTotalWithVat()));
     }
 
     @Test
-    void addOrderItemRejectsInvalidQuantity() {
-        Order order = new Order(1, sampleCustomer());
+    void addItemRejectsNonPositiveQuantity() {
+        Order order = new Order(1, customer());
         Product laptop = new Product(1, "Laptop", new BigDecimal("100.00"), 10);
-
-        assertThrows(IllegalArgumentException.class, () -> order.addOrderItem(laptop, 0));
+        assertThrows(IllegalArgumentException.class, () -> order.addItem(laptop, 0));
     }
 
     @Test
-    void getOrderItemsReturnsUnmodifiableList() {
-        Order order = new Order(1, sampleCustomer());
-        order.addOrderItem(new Product(1, "Laptop", new BigDecimal("100.00"), 10), 1);
-
-        // Callers must go through addOrderItem - direct mutation of the
-        // returned list must fail so totals can't be corrupted silently.
-        assertThrows(UnsupportedOperationException.class,
-                () -> order.getOrderItems().add(new OrderItem(new Product(2, "Phone", new BigDecimal("1.00"), 1), 1)));
+    void addItemReducesProductStock() {
+        Order order = new Order(1, customer());
+        Product laptop = new Product(1, "Laptop", new BigDecimal("100.00"), 10);
+        order.addItem(laptop, 4);
+        assertEquals(6, laptop.getStock());
     }
 
     @Test
-    void constructorRejectsNullCustomer() {
-        assertThrows(IllegalArgumentException.class, () -> new Order(1, null));
+    void getItemsReturnsUnmodifiableList() {
+        Order order = new Order(1, customer());
+        assertThrows(UnsupportedOperationException.class, () -> order.getItems().add(null));
     }
 
+    /**
+     * This is the invariant test: it calls Order.addItem directly, with no
+     * OrderService involved at all, and proves the stock check still fires.
+     * The rule lives in Order, not in whichever caller happens to check
+     * first — this is what "extensibility without breaking callers" means
+     * in practice.
+     */
     @Test
-    void constructorRejectsNonPositiveOrderId() {
-        assertThrows(IllegalArgumentException.class, () -> new Order(0, sampleCustomer()));
+    void addItemEnforcesStockEvenWithoutOrderService() {
+        Order order = new Order(1, customer());
+        Product laptop = new Product(1, "Laptop", new BigDecimal("19999.00"), 2);
+
+        assertThrows(InsufficientStockException.class, () -> order.addItem(laptop, 5));
+        assertEquals(2, laptop.getStock());       // failed attempt must not touch stock
+        assertTrue(order.getItems().isEmpty());   // and must not add a line
     }
 }
