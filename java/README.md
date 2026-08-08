@@ -44,9 +44,9 @@ merchant-order-desk-and-catalogue-engine-Aridivhaho23/
 │   │   │   ├── Customer.java
 │   │   │   ├── OrderItem.java
 │   │   │   └── Order.java
+│   │   │   └── InsufficientStockException.java
 │   │   ├── service/
 │   │   │   ├── OrderService.java
-│   │   │   └── InsufficientStockException.java
 │   │   └── app/
 │   │       └── PayNestApplication.java
 │   │
@@ -78,7 +78,7 @@ Represents one line within an order (a `Product` + a `quantity`). Calculates the
 
 Represents a customer's order: id, `Customer`, and its list of `OrderItem`s. The item list is only exposed as a **read-only** view (`Collections.unmodifiableList`) so callers cannot corrupt totals by mutating it directly. Computes the grand total, VAT, and total incl. VAT, and builds a summary **String** (it does not print — see Business Rules below).
 
-### OrderService (`service`)
+### InsufficientStockException (`domain`)
 
 Adds products to an order, including the stock check. Never prints to the console: it either succeeds or throws (`IllegalArgumentException` / `InsufficientStockException`) so the caller decides how to present the outcome.
 
@@ -142,33 +142,14 @@ BUILD SUCCESS
 ```
 
 Tests cover: product/customer validation (negative price, blank name, invalid email), order-item line totals, order grand-total/VAT calculations (including an empty order), encapsulation (the order-items list rejects direct mutation), and `OrderService` stock handling (successful add, insufficient stock, invalid quantity).
-```
-Ouput Sample:
-[INFO] [stdout] ================================
-[INFO] [stdout]         PAYNEST STORE
-[INFO] [stdout] ================================
-[INFO] [stdout] 
-Available products:
-[INFO] [stdout]   [1] Laptop     R   19,99 (stock: 100)
-[INFO] [stdout]   [2] Phone      R   29,99 (stock: 50)
-[INFO] [stdout]   [3] Tablet     R   39,99 (stock: 75)
-[INFO] [stdout] 
-[INFO] [stdout] Invalid customer details (Aridivhaho23,not-an-email): Customer email is not a valid email address: not-an-email Trying next entry.
-[INFO] [stdout] 2 x Laptop added successfully.
-[INFO] [stdout] 1 x Phone added successfully.
-[INFO] [stdout] 3 x Tablet added successfully.
-[INFO] [stdout] Could not add item (2,999): Insufficient stock for Phone (requested 999, available 49).
-[INFO] [stdout] Could not add item (9,1): no product with id 9.
-[INFO] [stdout] Could not add item (3,abc): "abc" is not a valid whole number.
-[INFO] [stdout] 
+
 ==================================================
         ORDER SUMMARY
 ==================================================
 Order Summary                           PayNest
 Order ID:                               903
-__________________________________________________
-
-Customer ID:                            1
+_________________________________________________
+Customer ID:                            1#
 [INFO] [stdout] Customer Name:          Aridivhaho23
 __________________________________________________
 
