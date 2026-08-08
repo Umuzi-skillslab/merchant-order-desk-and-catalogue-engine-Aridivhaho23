@@ -9,15 +9,15 @@ import java.util.Objects;
 
 public class Order {
 
-/**
- * @param id the unique identifier for this order
- * @param customer the person placing the order
- */
     private final int id;
     private final Customer customer;
     private final List<OrderItem> items = new ArrayList<>();
     private static final BigDecimal VAT_RATE = new BigDecimal("0.15");
 
+/**
+ * @param id the unique identifier for this order
+ * @param customer the person placing the order
+ */
     public Order(int id, Customer customer) {
         if (id <= 0) {
             throw new IllegalArgumentException("id must be positive.");

@@ -4,17 +4,18 @@ import java.util.regex.Pattern;
 
 /** The person placing an order. */
 public class Customer {
+
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[\\w.+-]+@[\\w-]+\\.[a-zA-Z]{2,}$");
-/**
-    * @param id the unique identifier for the customer
-    * @param name the customer's name
-    * @param email the customer's email address
- */
     private final int id;
     private final String name;
     private final String email;
 
+/**
+* @param id the unique identifier for the customer
+* @param name the customer's name
+* @param email the customer's email address
+ */
     public Customer(int id, String name, String email) {
         if (id <= 0) {
             throw new IllegalArgumentException("id must be positive.");
