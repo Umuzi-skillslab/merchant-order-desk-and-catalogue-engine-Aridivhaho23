@@ -89,7 +89,7 @@ The single entry point. Builds a small catalogue and one order, deliberately tri
 
 ```bash
 git clone <repository-url>
-cd merchant-order-desk-and-catalogue-engine-Aridivhaho23/java
+cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
 cd java
 ```
 

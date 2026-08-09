@@ -1,10 +1,9 @@
 package com.paynest.domain;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import java.math.BigDecimal;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 
 class ProductTest {
@@ -63,5 +62,11 @@ class ProductTest {
         Product product = new Product(1, "Laptop", new BigDecimal("5.00"), 2);
 
         assertThrows(IllegalArgumentException.class, () -> product.reduceStock(0));
+    }
+    @Test
+    void reduceStockAllowsQuantityEqualToStock() {
+        Product product = new Product(1, "Laptop", new BigDecimal("5.00"), 3);
+        product.reduceStock(3);
+        assertEquals(0, product.getStock());
     }
 }
