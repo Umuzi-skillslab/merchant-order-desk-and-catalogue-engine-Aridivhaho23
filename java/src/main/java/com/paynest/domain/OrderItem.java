@@ -13,6 +13,12 @@ public class OrderItem {
  */
     // package-private: only Order constructs these
     OrderItem(Product product, int quantity) {
+        if (product == null) {
+            throw new IllegalArgumentException("product cannot be null.");
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("quantity must be > 0.");
+        }
         this.product = product;
         this.quantity = quantity;
     }

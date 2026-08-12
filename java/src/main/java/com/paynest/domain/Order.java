@@ -62,7 +62,7 @@ public class Order {
         return calculateAllTotal().multiply(VAT_RATE).setScale(2, RoundingMode.HALF_UP);
     }
 
-public String printSummary() {
+    public String printSummary() {
     StringBuilder strib = new StringBuilder();
 
     strib.append("Order #").append(id).append(" — ").append(customer.getName()).append('\n');
