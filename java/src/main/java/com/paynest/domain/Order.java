@@ -19,6 +19,11 @@ public class Order {
  * @param customer the person placing the order
  */
     public Order(int id, Customer customer) {
+
+        if (customer == null) {
+            throw new IllegalArgumentException("Customer cannot be null");
+        }
+
         if (id <= 0) {
             throw new IllegalArgumentException("id must be positive.");
         }
@@ -62,34 +67,4 @@ public class Order {
         return calculateAllTotal().multiply(VAT_RATE).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public String printSummary() {
-    StringBuilder strib = new StringBuilder();
-
-    strib.append("Order #").append(id).append(" — ").append(customer.getName()).append('\n');
-    strib.append("Order Items:\n");
-    // Header
-    strib.append(String.format("  %-20s %-10s %12s%n","Product", "Quantity", "Total Price"));
-
-    if (items.isEmpty()) {
-        strib.append("  (no items)\n");
-    } else {
-        for (OrderItem item : items) {
-            strib.append(String.format(
-                "  %-20s %-10d R%11.2f%n",
-                item.getProduct().getName(),
-                item.getQuantity(),
-                item.calculateTotal()
-            ));
-        }
-    }
-
-    BigDecimal total = calculateAllTotal();
-    BigDecimal vat = calculateVat();
-
-    strib.append(String.format("  %-20s R%11.2f%n", "Subtotal:", total));
-    strib.append(String.format("  %-20s R%11.2f%n", "VAT (15%):", vat));
-    strib.append(String.format("  %-20s R%11.2f%n", "Total:", total.add(vat)));
-
-    return strib.toString();
-}
 }

@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import com.paynest.domain.Customer;
 import com.paynest.domain.InsufficientStockException;
 import com.paynest.domain.Order;
+import com.paynest.domain.OrderSummaryPrinter;
 import com.paynest.domain.Product;
 import com.paynest.service.OrderService;
 
@@ -21,6 +22,7 @@ public final class PayNestApplication {
     public static void main(String[] args) {
         Product laptop = new Product(1, "Laptop", new BigDecimal("12000.00"), 5);
         Product mouse  = new Product(2, "Wireless Mouse", new BigDecimal("350.00"), 20);
+        Product keyboard = new Product(3, "Mechanical Keyboard", new BigDecimal("1500.00"), 10);
 
         Customer customer = new Customer(1, "Ari Nemadodzi", "ari@example.com");
 
@@ -30,14 +32,16 @@ public final class PayNestApplication {
         // quantity > 1, per the demo requirement
         orderService.addToOrder(order, laptop, 1);
         orderService.addToOrder(order, mouse, 3);
+        orderService.addToOrder(order, keyboard, 2);
 
-        // deliberately over stock
+        //deliberately over stock
         try {
             orderService.addToOrder(order, mouse, 100);
         } catch (InsufficientStockException ex) {
             System.out.println("Rejected as expected: " + ex.getMessage());
         }
 
-        System.out.println(order.printSummary());
+        OrderSummaryPrinter printer = new OrderSummaryPrinter();
+        System.out.println(printer.printSummary(order));
     }
 }

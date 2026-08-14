@@ -1,5 +1,6 @@
 com\paynest\domain\Order.class
 com\paynest\domain\Product.class
+com\paynest\domain\OrderSummaryPrinter.class
 com\paynest\service\OrderService.class
 com\paynest\domain\OrderItem.class
 com\paynest\domain\Customer.class

@@ -11,6 +11,7 @@ class PrintSummaryTest {
     void printSummaryContainsFormattedTotals() {
         Customer customer = new Customer(1, "Ari", "ari@example.com");
         Order order = new Order(1, customer);
+        OrderSummaryPrinter printer = new OrderSummaryPrinter();
 
         Product laptop = new Product(1, "Laptop", new BigDecimal("39.99"), 10); // line total 79.98
         Product phone  = new Product(2, "Phone",  new BigDecimal("29.99"), 10); // line total 29.99
@@ -22,7 +23,7 @@ class PrintSummaryTest {
         BigDecimal vat = order.calculateVat();
         BigDecimal total = subtotal.add(vat);
 
-        String output = order.printSummary();
+        String output = printer.printSummary(order);
 
         // printSummary uses "R%11.2f" formatting — assert that the formatted values appear
         assertTrue(output.contains(String.format("R%11.2f", subtotal.doubleValue())),

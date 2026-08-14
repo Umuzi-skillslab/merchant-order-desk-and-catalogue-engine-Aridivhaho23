@@ -1,0 +1,6 @@
+com\paynest\domain\PrintSummaryTest.class
+com\paynest\domain\OrderItemTest.class
+com\paynest\domain\ProductTest.class
+com\paynest\service\OrderServiceTest.class
+com\paynest\domain\OrderTest.class
+com\paynest\domain\CustomerTest.class

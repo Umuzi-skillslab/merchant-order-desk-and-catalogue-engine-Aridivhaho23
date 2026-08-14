@@ -12,6 +12,11 @@ class OrderTest {
     private Customer customer() {
         return new Customer(1, "Ari", "ari@example.com");
     }
+    
+    @Test
+    void constructorRejectsNullCustomer() {
+        assertThrows(IllegalArgumentException.class,() -> new Order(6, null));
+    }
 
     @Test
     void emptyOrderHasZeroTotal() {
@@ -81,11 +86,6 @@ class OrderTest {
     }
 
     @Test
-    void constructorRejectsNullCustomer() {
-        assertThrows(NullPointerException.class, () -> new Order(1, null));
-    }
-
-    @Test
     void addItemReducesProductStock() {
         Order order = new Order(1, customer());
         Product laptop = new Product(1, "Laptop", new BigDecimal("100.00"), 10);
@@ -113,6 +113,9 @@ class OrderTest {
     @Test
     void getItemsReturnsUnmodifiableList() {
         Order order = new Order(1, customer());
+        Product product = new Product(7,"Tablet",new BigDecimal("2000.00"), 5);
+        order.addItem(product, 2);
+
         assertThrows(UnsupportedOperationException.class, () -> order.getItems().add(null));
     }
 
