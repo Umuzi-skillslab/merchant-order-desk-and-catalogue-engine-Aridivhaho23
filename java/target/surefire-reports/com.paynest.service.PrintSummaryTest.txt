@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.paynest.service.PrintSummaryTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.008 s -- in com.paynest.service.PrintSummaryTest
