@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import com.paynest.domain.Customer;
 import com.paynest.domain.InsufficientStockException;
 import com.paynest.domain.Order;
-import com.paynest.domain.OrderSummaryPrinter;
 import com.paynest.domain.Product;
 import com.paynest.service.OrderService;
+import com.paynest.service.OrderSummaryPrinter;
 
 /**
  * Demonstration entry point. Builds a small catalogue, one customer, and one

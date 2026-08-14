@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.paynest.domain.CustomerTest
 -------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.094 s -- in com.paynest.domain.CustomerTest
+Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.063 s -- in com.paynest.domain.CustomerTest

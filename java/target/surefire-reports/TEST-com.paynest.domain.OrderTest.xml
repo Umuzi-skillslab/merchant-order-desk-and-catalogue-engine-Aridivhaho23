@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.paynest.domain.OrderTest" time="0.088" tests="15" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.paynest.domain.OrderTest" time="0.05" tests="15" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.cpu.isalist" value="amd64"/>
@@ -16,7 +16,7 @@
     <property name="user.country" value="ZA"/>
     <property name="session.topDirectory" value="C:\Users\OEM\Documents\Capstones\Capstone1\merchant-order-desk-and-catalogue-engine-Aridivhaho23\java"/>
     <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-21.0.11\bin"/>
-    <property name="sun.java.command" value="C:\Users\OEM\AppData\Local\Temp\surefire9964235689724647790\surefirebooter-20260814124648708_3.jar C:\Users\OEM\AppData\Local\Temp\surefire9964235689724647790 2026-08-14T12-46-48_486-jvmRun1 surefire-20260814124648708_1tmp surefire_0-20260814124648708_2tmp"/>
+    <property name="sun.java.command" value="C:\Users\OEM\AppData\Local\Temp\surefire13708804729163444794\surefirebooter-20260814130030833_3.jar C:\Users\OEM\AppData\Local\Temp\surefire13708804729163444794 2026-08-14T13-00-30_713-jvmRun1 surefire-20260814130030833_1tmp surefire_0-20260814130030833_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="C:\Users\OEM\Documents\Capstones\Capstone1\merchant-order-desk-and-catalogue-engine-Aridivhaho23\java\target\test-classes;C:\Users\OEM\Documents\Capstones\Capstone1\merchant-order-desk-and-catalogue-engine-Aridivhaho23\java\target\classes;C:\Users\OEM\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\OEM\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\OEM\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\OEM\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\OEM\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\OEM\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\OEM\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\OEM\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -31,7 +31,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
-    <property name="surefire.real.class.path" value="C:\Users\OEM\AppData\Local\Temp\surefire9964235689724647790\surefirebooter-20260814124648708_3.jar"/>
+    <property name="surefire.real.class.path" value="C:\Users\OEM\AppData\Local\Temp\surefire13708804729163444794\surefirebooter-20260814130030833_3.jar"/>
     <property name="user.script" value=""/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.11+9-LTS-211"/>
@@ -59,19 +59,19 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="getItemsReturnsUnmodifiableList" classname="com.paynest.domain.OrderTest" time="0.003"/>
-  <testcase name="grandTotalEqualsSumOfLineTotals" classname="com.paynest.domain.OrderTest" time="0.005"/>
-  <testcase name="addItemRejectsNullProduct" classname="com.paynest.domain.OrderTest" time="0.002"/>
-  <testcase name="constructorRejectsNullCustomer" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="getItemsReturnsUnmodifiableList" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="grandTotalEqualsSumOfLineTotals" classname="com.paynest.domain.OrderTest" time="0.003"/>
+  <testcase name="addItemRejectsNullProduct" classname="com.paynest.domain.OrderTest" time="0.001"/>
+  <testcase name="constructorRejectsNullCustomer" classname="com.paynest.domain.OrderTest" time="0.001"/>
   <testcase name="addItemReducesProductStock" classname="com.paynest.domain.OrderTest" time="0.0"/>
-  <testcase name="stockDepletesAcrossMultipleAddItemCalls" classname="com.paynest.domain.OrderTest" time="0.002"/>
-  <testcase name="addItemEnforcesStockEvenWithoutOrderService" classname="com.paynest.domain.OrderTest" time="0.025"/>
-  <testcase name="vatRoundsExactHalfUpBoundary" classname="com.paynest.domain.OrderTest" time="0.0"/>
-  <testcase name="vatRoundsHalfUpWhenNotAlreadyClean" classname="com.paynest.domain.OrderTest" time="0.002"/>
-  <testcase name="addItemAllowsQuantityEqualToAvailableStock" classname="com.paynest.domain.OrderTest" time="0.001"/>
-  <testcase name="addItemRejectsNonPositiveQuantity" classname="com.paynest.domain.OrderTest" time="0.004"/>
-  <testcase name="vatIsFifteenPercentOfSubtotal" classname="com.paynest.domain.OrderTest" time="0.002"/>
-  <testcase name="addItemRejectsQuantityOneMoreThanStock" classname="com.paynest.domain.OrderTest" time="0.011"/>
-  <testcase name="emptyOrderHasZeroTotal" classname="com.paynest.domain.OrderTest" time="0.003"/>
-  <testcase name="constructorRejectsNonPositiveOrderId" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="stockDepletesAcrossMultipleAddItemCalls" classname="com.paynest.domain.OrderTest" time="0.001"/>
+  <testcase name="addItemEnforcesStockEvenWithoutOrderService" classname="com.paynest.domain.OrderTest" time="0.007"/>
+  <testcase name="vatRoundsExactHalfUpBoundary" classname="com.paynest.domain.OrderTest" time="0.01"/>
+  <testcase name="vatRoundsHalfUpWhenNotAlreadyClean" classname="com.paynest.domain.OrderTest" time="0.0"/>
+  <testcase name="addItemAllowsQuantityEqualToAvailableStock" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="addItemRejectsNonPositiveQuantity" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="vatIsFifteenPercentOfSubtotal" classname="com.paynest.domain.OrderTest" time="0.001"/>
+  <testcase name="addItemRejectsQuantityOneMoreThanStock" classname="com.paynest.domain.OrderTest" time="0.002"/>
+  <testcase name="emptyOrderHasZeroTotal" classname="com.paynest.domain.OrderTest" time="0.001"/>
+  <testcase name="constructorRejectsNonPositiveOrderId" classname="com.paynest.domain.OrderTest" time="0.0"/>
 </testsuite>

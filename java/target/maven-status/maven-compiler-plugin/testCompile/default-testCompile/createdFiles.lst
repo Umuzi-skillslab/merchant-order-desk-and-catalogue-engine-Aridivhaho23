@@ -1,5 +1,5 @@
-com\paynest\domain\PrintSummaryTest.class
 com\paynest\domain\OrderItemTest.class
+com\paynest\service\PrintSummaryTest.class
 com\paynest\domain\ProductTest.class
 com\paynest\service\OrderServiceTest.class
 com\paynest\domain\OrderTest.class

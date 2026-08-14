@@ -1,9 +1,13 @@
-package com.paynest.domain;
+package com.paynest.service;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
+
+import com.paynest.domain.Customer;
+import com.paynest.domain.Order;
+import com.paynest.domain.Product;
 
 class PrintSummaryTest {
 
