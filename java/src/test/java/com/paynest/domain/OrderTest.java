@@ -1,5 +1,6 @@
 package com.paynest.domain;
 
+
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -157,5 +158,18 @@ class OrderTest {
         assertEquals(3, laptop.getStock());
         assertEquals(2, order.getItems().size());
         assertEquals(0, new BigDecimal("700.00").compareTo(order.calculateAllTotal()));
+    }
+
+    @Test
+    void totalInclVatIsSubtotalPlusVat() {
+        Order order = new Order(1, customer());
+        order.addItem(new Product(1, "Laptop", new BigDecimal("100.00"), 10), 2); // 200.00 + 30.00
+        assertEquals(0, new BigDecimal("230.00").compareTo(order.calculateTotalInclVat()));
+        assertEquals(order.calculateAllTotal().add(order.calculateVat()), order.calculateTotalInclVat());
+    }
+
+    @Test
+    void emptyOrderTotalInclVatIsZero() {
+        assertEquals(0, BigDecimal.ZERO.compareTo(new Order(1, customer()).calculateTotalInclVat()));
     }
 }

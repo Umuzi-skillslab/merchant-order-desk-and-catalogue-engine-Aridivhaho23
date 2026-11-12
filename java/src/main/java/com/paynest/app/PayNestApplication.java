@@ -1,47 +1,93 @@
 package com.paynest.app;
 
 import java.math.BigDecimal;
+import java.time.YearMonth;
+import java.util.List;
 
+import com.paynest.checkout.CheckoutService;
 import com.paynest.domain.Customer;
-import com.paynest.domain.InsufficientStockException;
 import com.paynest.domain.Order;
 import com.paynest.domain.Product;
+import com.paynest.payment.PaymentMethod;
+import com.paynest.payment.PaymentProcessor;
+import com.paynest.payment.rails.BitcoinPayment;
+import com.paynest.payment.rails.BuyNowPayLaterPayment;
+import com.paynest.payment.rails.CardDetails;
+import com.paynest.payment.rails.CardPayment;
+import com.paynest.payment.rails.EftPayment;
+import com.paynest.payment.rails.SplitPayment;
+import com.paynest.payment.rails.VoucherPayment;
+import com.paynest.payment.rails.WalletPayment;
 import com.paynest.service.OrderService;
 import com.paynest.service.OrderSummaryPrinter;
 
-/**
- * Demonstration entry point. Builds a small catalogue, one customer, and one
- * order — printing the summary a reviewer can check by hand. Also
- * deliberately triggers one invalid add (over stock) to show that
- * validation fails loudly instead of corrupting the total.
- */
+/** Application entry point and executable demonstration of every supported payment method. */
 public final class PayNestApplication {
-
     private PayNestApplication() { }
 
     public static void main(String[] args) {
-        Product laptop = new Product(1, "Laptop", new BigDecimal("12000.00"), 5);
-        Product mouse  = new Product(2, "Wireless Mouse", new BigDecimal("350.00"), 20);
-        Product keyboard = new Product(3, "Mechanical Keyboard", new BigDecimal("1500.00"), 10);
+        CheckoutService checkoutService = new CheckoutService(new PaymentProcessor());
+        Order order = buildOrder(1);
+        System.out.println(new OrderSummaryPrinter().printSummary(order));
+        demonstrateAllPaymentMethods(checkoutService);
+        demonstrateCardValidation();
+    }
 
-        Customer customer = new Customer(1, "Ari Nemadodzi", "ari@example.com");
+    private static Order buildOrder(int orderId) {
 
-        OrderService orderService = new OrderService();
-        Order order = orderService.createOrder(1, customer);
+        Product laptop = new Product(orderId * 10 + 1, "Laptop", new BigDecimal("12000.00"), 5);
+        Product mouse = new Product(orderId * 10 + 2, "Wireless Mouse", new BigDecimal("350.00"), 20);
+        Product keyboard = new Product(orderId * 10 + 3, "Mechanical Keyboard", new BigDecimal("1500.00"), 10);
 
-        // quantity > 1, per the demo requirement
-        orderService.addToOrder(order, laptop, 1);
-        orderService.addToOrder(order, mouse, 3);
-        orderService.addToOrder(order, keyboard, 2);
+        Customer customer = new Customer(orderId, "Ari Nemadodzi", "ari@example.com");
 
-        //deliberately over stock
-        try {
-            orderService.addToOrder(order, mouse, 100);
+        OrderService service = new OrderService();
+        Order order = service.createOrder(orderId, customer);
+
+        service.addToOrder(order, laptop, 1);
+        service.addToOrder(order, mouse, 3);
+        service.addToOrder(order, keyboard, 2);
+        
+        /*try {
+            service.addToOrder(order, mouse, 100);
         } catch (InsufficientStockException ex) {
             System.out.println("Rejected as expected: " + ex.getMessage());
-        }
+        }*/
+        return order;
+    }
 
-        OrderSummaryPrinter printer = new OrderSummaryPrinter();
-        System.out.println(printer.printSummary(order));
+    /** Convenience entry point for the payment-rail demonstration. */
+    public static void demonstrateAllPaymentMethods()
+    {
+        demonstrateAllPaymentMethods(new CheckoutService(new PaymentProcessor()));
+    }
+
+    /** Runs all payment rails in one launch, each with a fresh order (no double charging). */
+    public static void demonstrateAllPaymentMethods(CheckoutService checkoutService) {
+        List<PaymentMethod> methods = List.of(
+                new CardPayment(new CardDetails("4111 1111 1111 1111", YearMonth.now().plusYears(2), "123")),
+                new EftPayment(),
+                new WalletPayment(100_000.00),
+                new VoucherPayment("DEMO-VOUCHER-1234", 100_000.00),
+                new BitcoinPayment("bc1qdemodestinationaddress", () -> new BigDecimal("1000000.00")),
+                new BuyNowPayLaterPayment(100_000.00),
+                new SplitPayment(List.of(
+                        new SplitPayment.Allocation(new WalletPayment(10_000.00), 5_000.00),
+                        new SplitPayment.Allocation(new VoucherPayment("SPLIT-DEMO-1234", 100_000.00), 13_457.50)))
+        );
+        int id = 2;
+        for (PaymentMethod method : methods) {
+            System.out.println("\n--- Testing " + method.getPaymentType() + " ---");
+            checkoutService.checkout(buildOrder(id++), method);
+        }
+    }
+
+    private static void demonstrateCardValidation()
+    {
+        try {
+            new CardDetails("4111 1111 1111 1111", YearMonth.now().plusYears(2), "1234");
+        } catch (IllegalArgumentException ex) {
+            System.out.println("Card rejected as expected: " + ex.getMessage());
+        }
     }
 }
