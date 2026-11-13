@@ -63,7 +63,6 @@ java/
 ## How to Test
 
 ```bash
-cd Submission-Paynest
 cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
 cd java
 mvn clean test
