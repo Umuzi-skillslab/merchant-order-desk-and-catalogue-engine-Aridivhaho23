@@ -9,9 +9,6 @@ A small Java kernel for PayNest, an early-stage South African fintech.
 * **Capstone 3:** one checkout that pays that same order through interchangeable payment types
   (card, EFT, wallet, voucher, Bitcoin) without the order code knowing which one is used.
 
-See [CAPSTONE3_INTEGRATION.md](CAPSTONE3_INTEGRATION.md) for the design and
-[CAPSTONE3_RUBRIC_ASSESSMENT.md](CAPSTONE3_RUBRIC_ASSESSMENT.md) for the rubric check.
-
 ## Project Structure
 
 ```
