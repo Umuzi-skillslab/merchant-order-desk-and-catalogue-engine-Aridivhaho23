@@ -2,136 +2,141 @@
 
 ## Overview
 
-A small Java kernel for PayNest, an early-stage South African fintech.
+PayNest is a small Java application developed for an early-stage South African fintech scenario.
 
-* **Capstone 1:** products, customers, orders with line items, and a trustworthy order total
-  (subtotal, 15% VAT, grand total) printed as a readable summary.
-* **Capstone 3:** one checkout that pays that same order through interchangeable payment types
-  (card, EFT, wallet, voucher, Bitcoin) without the order code knowing which one is used.
+- **Capstone 1** covers products, customers, orders with line items, and order totals. It calculates the subtotal, 15% VAT and grand total, then prints an order summary.
+- **Capstone 3** builds on that foundation by adding a checkout process that can use interchangeable payment methods. The order code does not need to know which payment method is selected.
 
 ## Project Structure
 
-```
+```text
 java/
 ├── pom.xml
 └── src/
     ├── main/java/com/paynest/
-    │   ├── app/        PayNestApplication
-    │   ├── domain/     Product, Customer, OrderItem, Order, InsufficientStockException
-    │   ├── service/    OrderService, OrderSummaryPrinter
-    │   └── payment/    PaymentMethod (interface), AbstractPaymentMethod (abstract class),
-    │                   CardPayment, EftPayment, WalletPayment, VoucherPayment, BitcoinPayment,
-    │                   Refundable, BitcoinExchangeRate, PaymentProcessing (interface), PaymentProcessor,
-    │                   CardDetails, CardScheme, RandFormat
-    └── test/java/com/paynest/   mirrors the layout above
+    │   ├── app/
+    │   │   └── PayNestApplication
+    │   ├── checkout/
+    │   │   ├── CheckoutService
+    │   │   └── PaymentStatus
+    │   ├── domain/
+    │   │   ├── Customer
+    │   │   ├── InsufficientStockException
+    │   │   ├── Order
+    │   │   ├── OrderItem
+    │   │   └── Product
+    │   ├── payment/
+    │   │   ├── PaymentMethod
+    │   │   ├── PaymentProcessing
+    │   │   ├── PaymentProcessor
+    │   │   └── rails/
+    │   │       ├── AbstractPaymentMethod
+    │   │       ├── BitcoinExchangeRate
+    │   │       ├── BitcoinPayment
+    │   │       ├── BuyNowPayLaterPayment
+    │   │       ├── CardDetails
+    │   │       ├── CardPayment
+    │   │       ├── CardScheme
+    │   │       ├── EftMode
+    │   │       ├── EftPayment
+    │   │       ├── Refundable
+    │   │       ├── SplitPayment
+    │   │       ├── VoucherPayment
+    │   │       └── WalletPayment
+    │   ├── service/
+    │   │   ├── OrderService
+    │   │   └── OrderSummaryPrinter
+    │   └── shared/
+    │       └── RandFormat
+    └── test/java/com/paynest/
+        └── mirrors the main source packages
 ```
 
 ## Features
 
 ### Capstone 1
-* Products with id, name, price and stock (validated, never negative).
-* Customers with a validated email address.
-* Orders with multiple lines; stock is checked and reduced when a line is added.
-* Subtotal, 15% VAT and grand total using `BigDecimal` (`HALF_UP`, two decimals).
-* A formatted order summary that prints the same on every machine (fixed `Locale.US`).
+
+- Products have an ID, name, price and stock quantity. Product data is validated, and stock cannot be negative.
+- Customers have validated email addresses.
+- Orders can contain multiple line items. Stock is checked and reduced when an item is added to an order.
+- The order subtotal, 15% VAT and grand total are calculated using `BigDecimal`, with `RoundingMode.HALF_UP` and two decimal places.
+- `OrderSummaryPrinter` produces a formatted order summary. Currency formatting uses `Locale.US` to keep the decimal separator consistent across computers.
 
 ### Capstone 3
-* `PaymentMethod` interface: `boolean processPayment(double amount)` and `String getPaymentType()`.
-* `AbstractPaymentMethod` abstract class: holds the label and the shared amount check once; each
-  rail only writes its own message and rule.
-* Seven payment options: `CardPayment`, `EftPayment`, `WalletPayment`, `VoucherPayment`, `BitcoinPayment`,
-  `BuyNowPayLaterPayment`, and `SplitPayment` (which composes multiple instruments).
-  Each implements the same `PaymentMethod` contract; most extend `AbstractPaymentMethod`, while
-  `SplitPayment` implements the interface directly as a composite.
-* Card validation: number (digits, 13 to 19 long, Luhn checksum, supported network), expiry (not in
-  the past), and CVV (3 digits, or 4 for American Express). Only the last four digits are kept.
-* `CheckoutService` and `PaymentProcessor`: one checkout use case that accepts any `PaymentMethod`; `Order` remains focused on order state and totals.
-* Voucher balance is checked before redemption; Bitcoin converts the Rand order total using an
-  injected ZAR-per-BTC quote provider (no fake live rate is hard-coded).
-* Optional `Refundable` capability: card, wallet and voucher implement it. Refunds are limited
-  to successful, not-yet-refunded charges. Bitcoin, EFT and BNPL do not claim direct refund support.
-* `CheckoutService` receives the `PaymentProcessing` abstraction through its constructor. `Order` has no dependency on payment infrastructure; `OrderService` handles order creation and item management only.
-* Split payment accepts only refundable rails and compensates earlier successful allocations in
-  reverse order if a later allocation declines.
-* Safe failure paths: wallet/voucher with too little balance, invalid amount, missing payment
-  method, a rail that throws, an empty order, paying twice, split allocation mismatches, BNPL credit
-  limits, and refund limit violations.
-* `PaymentStatus` is an enum (`UNPAID`, `PAYMENT_FAILED`, `PAID`) exposed by `Order.getPaymentStatus()`;
-  `isPaid()` remains as a convenient compatibility method.
-* `PayNestApplication` demonstrates every payment option against its own fresh order.
+
+- `PaymentMethod` defines the common payment contract: `boolean processPayment(double amount)` and `String getPaymentType()`.
+- `AbstractPaymentMethod` provides shared payment-label handling and amount validation. Individual payment classes implement their own payment rules.
+- The application demonstrates seven payment options: `CardPayment`, `EftPayment`, `WalletPayment`, `VoucherPayment`, `BitcoinPayment`, `BuyNowPayLaterPayment` and `SplitPayment`.
+- `SplitPayment` is a composite payment method that combines allocations across multiple payment instruments.
+- Card details are validated for card number format, Luhn checksum, supported network, expiry date and CVV. Only the last four card-number digits are retained.
+- `CheckoutService` coordinates checkout, while `PaymentProcessor` processes the selected `PaymentMethod`. The `Order` class remains responsible for order state and totals.
+- Voucher payments check the available voucher balance before redemption.
+- Bitcoin payments convert the Rand order total using an injected ZAR-per-BTC quote provider. The demonstration uses a simulated quote, not a live market rate.
+- `Refundable` is a separate capability implemented by card, wallet and voucher payments. The simulation tracks successful charges and prevents refunds beyond the remaining refundable amount. Bitcoin, EFT and buy-now-pay-later payments do not implement this interface.
+- `CheckoutService` receives the `PaymentProcessing` abstraction through its constructor. This keeps checkout independent of the concrete payment processor.
+- Split payment accepts refundable payment instruments and compensates earlier successful allocations in reverse order if a later allocation fails.
+- Failure scenarios include insufficient wallet or voucher balances, invalid amounts, a missing payment method, a payment method that throws an exception, an empty order, duplicate payment attempts, split-allocation mismatches, BNPL credit-limit failures and refund-limit violations.
+- `PaymentStatus` represents an order's payment state: `UNPAID`, `PAYMENT_FAILED` or `PAID`. `Order.getPaymentStatus()` exposes the state, while `isPaid()` remains available as a convenience method.
+- `PayNestApplication` prints the summary for order #1 and passes that same order to the first demonstration checkout. The remaining payment demonstrations use fresh orders so that an order is not charged more than once.
 
 ## How to Test
 
+Requires Java 21 and Maven.
+
+After extracting the ZIP file, open a terminal in the directory that contains the
+`merchant-order-desk-and-catalogue-engine-Aridivhaho23` folder. Run:
+
 ```bash
-cd Submission-Paynest
-cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
-cd java
+cd merchant-order-desk-and-catalogue-engine-Aridivhaho23/java
 mvn clean test
 ```
 
 ## How to Run
 
-Requires Java 21 and Maven. From the `java` directory:
+From the `java` directory, run:
 
 ```bash
-mvn clean compile
 mvn exec:java
 ```
 
-The program builds the Capstone 1 order, prints its summary, pays it by card (printing the rail,
-the amount and the order completion), and finally shows an invalid card being rejected.
+The application builds order #1, prints its summary and passes that same `Order` object to the first demonstration checkout. The first payment demonstration uses a card, so the completion message should identify order #1 and show the same grand total as the summary. Each subsequent payment demonstration uses a newly created order. The application also demonstrates rejection of invalid card details.
 
-To demonstrate polymorphism, change only the selected `PaymentMethod` assignment in
-`PayNestApplication.payForOrder`. Examples are included as comments for EFT, wallet, voucher and
-Bitcoin. Bitcoin requires an injected quote provider; the commented fixed quote is only a demo
-value, not a live market rate.
+## Why the Payment Interface Matters
 
-### Refund design and real-world behaviour
+`CheckoutService` works with the `PaymentMethod` interface instead of checking for specific payment classes. Each payment class provides its own implementation of `processPayment()`, and Java selects the correct implementation at runtime through polymorphism.
 
-`Refundable` is a separate capability, not part of `PaymentMethod`. Card, wallet and voucher payments
-implement it. The simulation tracks successful charges and prevents refunds above the remaining
-refundable amount. In a real card system, the processor/acquirer must perform the refund against
-the original transaction; the application must retain a transaction reference and follow scheme
-and provider rules. A wallet refund is a credit back to that same wallet, subject to the wallet
-ledger and applicable terms. Voucher refunds restore the redeemed value to the same simulated
-voucher balance.
+When a new payment method is introduced, the usual extension is to create a new class that implements `PaymentMethod` and provide that object to checkout. Checkout does not need another `if` or `switch` branch for the new payment type, and the `Order` class does not need to be changed.
 
-EFT returns are generally handled through bank/payment-provider processes and are not guaranteed
-by a generic application-level reversal method. Voucher refunds depend on voucher terms and
-applicable consumer law; this sample models voucher refunds by restoring the same voucher balance; real handling
-depends on voucher terms and applicable consumer law. Bitcoin on-chain transfers are generally irreversible once confirmed. A Bitcoin
-"refund" is a separate outgoing transaction, not a reversal, so `BitcoinPayment` does not
-implement `Refundable`.
+## Refund Design and Real-World Behaviour
 
-`BitcoinExchangeRate` supplies the ZAR value of one BTC. A production implementation must use a
-trusted provider quote with timestamp/expiry, handle quote movement and network fees, and wait for
-the required blockchain confirmations. This project only simulates the payment request; it does
-not connect to a wallet, exchange, card processor or blockchain.
+`Refundable` is a separate capability rather than part of the `PaymentMethod` contract. Card, wallet and voucher payment classes implement it. The simulation tracks successful charges and prevents refunds above the remaining refundable amount.
 
+In a real card-payment system, the processor or acquirer must process a refund against the original transaction. The application would need to retain the transaction reference and follow the relevant card-scheme and provider rules. A wallet refund is credited back to the same wallet, subject to its ledger and applicable terms. This sample restores voucher value to the same simulated voucher balance; real voucher refunds depend on the voucher terms and applicable consumer law.
+
+EFT returns are generally handled through bank or payment-provider processes and are not guaranteed by a generic application-level reversal method. Bitcoin transactions are generally irreversible once confirmed. A Bitcoin refund is a separate outgoing transaction, not a reversal of the original transfer, so `BitcoinPayment` does not implement `Refundable`.
+
+`BitcoinExchangeRate` supplies the ZAR value of one BTC. A production implementation would need a trusted provider quote with a timestamp and expiry, handling for quote changes and network fees, and a policy for the required blockchain confirmations. This project only simulates the payment request; it does not connect to a wallet, exchange, card processor or blockchain.
 
 ## Business Rules
 
-* The amount charged at checkout is the order grand total (subtotal + VAT), calculated once by
-  `Order.calculateTotalInclVat()`. The printed summary reads the same method.
-* Payment amounts are `double` (as in the brief). The Capstone 1 total is `BigDecimal`, and it is
-  converted to `double` in exactly one place, `CheckoutService.checkout`.
-* Amounts print with two decimals and a fixed locale, e.g. `R18457.50`.
-* A failed payment leaves the order unpaid, so the customer can try another rail.
-* A paid order is never charged twice, and its items can no longer be changed.
+- The amount charged at checkout is the order grand total (subtotal plus VAT), calculated by `Order.calculateTotalInclVat()`. The printed summary uses the same total calculation.
+- The payment contract accepts a `double`, as specified in the project brief. The Capstone 1 total is calculated as a `BigDecimal` and converted to `double` in one place: `CheckoutService.checkout()`.
+- Amounts are formatted with two decimal places and a consistent decimal separator, for example `R18457.50`.
+- A failed payment leaves the order unpaid and available for another payment attempt.
+- A paid order cannot be charged again, and its items can no longer be changed.
 
 ## Known Limitations
 
-* The rails are simulations (no bank, card network or gateway). Never use real card data.
-* Stock is reduced when an item is added to an order and is not released if the order is abandoned.
-* `double` is not exact for money. It is used here because the brief specifies it; a production
-  system would use `BigDecimal`.
+- Payment rails are simulations. The application does not connect to a bank, card network or payment gateway. Do not use real card details.
+- Stock is reduced when an item is added to an order and is not automatically restored if the order is abandoned.
+- `double` cannot represent all decimal monetary values exactly. It is used for payment processing because the project brief specifies it; a production financial application should use an appropriate decimal-money representation throughout.
 
 ## Author
 
 **Name:** Aridivhaho Junior Nemadodzi
 
-Capstone 1 and Capstone 3 · Java Programming
+**Coursework:** Capstone 1 and Capstone 3 — Java Programming
 
-## License
+## Academic Use
 
-Developed for educational purposes as part of a Java programming capstone assessment ~ Ari.
+This project was developed for educational purposes as part of a Java programming capstone assessment.

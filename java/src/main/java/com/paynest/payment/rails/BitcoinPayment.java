@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
+import com.paynest.shared.RandFormat;
+
 /**
  * Simulated Bitcoin payment rail.
  *

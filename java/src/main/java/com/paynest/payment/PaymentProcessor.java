@@ -1,6 +1,6 @@
 package com.paynest.payment;
 
-import com.paynest.payment.rails.RandFormat;
+import com.paynest.shared.RandFormat;
 
 /**
  * Runs a payment on ANY rail and prints the outcome.

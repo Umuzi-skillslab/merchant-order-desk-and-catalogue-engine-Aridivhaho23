@@ -1,4 +1,4 @@
-package com.paynest.payment.rails;
+package com.paynest.shared;
 
 import java.util.Locale;
 

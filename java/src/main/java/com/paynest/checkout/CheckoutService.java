@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.paynest.domain.Order;
 import com.paynest.payment.PaymentMethod;
 import com.paynest.payment.PaymentProcessing;
-import com.paynest.payment.rails.RandFormat;
+import com.paynest.shared.RandFormat;
 
 /** Orchestrates checkout without making the Order entity responsible for payment processing. */
 public class CheckoutService {

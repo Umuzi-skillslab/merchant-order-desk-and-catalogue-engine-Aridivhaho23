@@ -1,5 +1,7 @@
 package com.paynest.payment.rails;
 
+import com.paynest.shared.RandFormat;
+
 /** Rail 2: pay by EFT (bank transfer). Simulated: the transfer always succeeds. */
 public class EftPayment extends AbstractPaymentMethod {
 

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.YearMonth;
 import java.util.Objects;
 
+import com.paynest.shared.RandFormat;
+
 /**
  * Rail 1: pay by bank card.
  *

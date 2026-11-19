@@ -2,6 +2,7 @@ package com.paynest.payment.rails;
 
 import java.math.BigDecimal;
 
+import com.paynest.shared.RandFormat;
 /**
  * Rail 3: pay from an in-app wallet. A wallet holds a balance, so unlike card and EFT it can
  * genuinely FAIL (insufficient funds).

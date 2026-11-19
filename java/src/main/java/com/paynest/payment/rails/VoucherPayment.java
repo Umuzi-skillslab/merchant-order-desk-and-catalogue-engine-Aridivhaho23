@@ -1,7 +1,8 @@
 package com.paynest.payment.rails;
 
 import java.math.BigDecimal;
-import java.util.Objects;
+
+import com.paynest.shared.RandFormat;
 
 /**
  * Payment using a stored-value voucher.

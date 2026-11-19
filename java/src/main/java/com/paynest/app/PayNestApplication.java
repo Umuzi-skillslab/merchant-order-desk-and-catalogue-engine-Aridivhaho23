@@ -28,8 +28,9 @@ public final class PayNestApplication {
     public static void main(String[] args) {
         CheckoutService checkoutService = new CheckoutService(new PaymentProcessor());
         Order order = buildOrder(1);
+        // The summary and the first successful payment deliberately refer to this same Order.
         System.out.println(new OrderSummaryPrinter().printSummary(order));
-        demonstrateAllPaymentMethods(checkoutService);
+        demonstrateAllPaymentMethods(checkoutService, order);
         demonstrateCardValidation();
     }
 
@@ -59,11 +60,14 @@ public final class PayNestApplication {
     /** Convenience entry point for the payment-rail demonstration. */
     public static void demonstrateAllPaymentMethods()
     {
-        demonstrateAllPaymentMethods(new CheckoutService(new PaymentProcessor()));
+        demonstrateAllPaymentMethods(new CheckoutService(new PaymentProcessor()), buildOrder(1));
     }
 
-    /** Runs all payment rails in one launch, each with a fresh order (no double charging). */
-    public static void demonstrateAllPaymentMethods(CheckoutService checkoutService) {
+    /**
+     * Demonstrates every rail. The first rail pays the supplied order (the one printed by main);
+     * remaining rails use fresh orders so each example is an independent checkout.
+     */
+    public static void demonstrateAllPaymentMethods(CheckoutService checkoutService, Order firstOrder) {
         List<PaymentMethod> methods = List.of(
                 new CardPayment(new CardDetails("4111 1111 1111 1111", YearMonth.now().plusYears(2), "123")),
                 new EftPayment(),
@@ -76,9 +80,12 @@ public final class PayNestApplication {
                         new SplitPayment.Allocation(new VoucherPayment("SPLIT-DEMO-1234", 100_000.00), 13_457.50)))
         );
         int id = 2;
+        boolean first = true;
         for (PaymentMethod method : methods) {
             System.out.println("\n--- Testing " + method.getPaymentType() + " ---");
-            checkoutService.checkout(buildOrder(id++), method);
+            Order orderToPay = first ? firstOrder : buildOrder(id++);
+            checkoutService.checkout(orderToPay, method);
+            first = false;
         }
     }
 

@@ -2,6 +2,8 @@ package com.paynest.payment.rails;
 
 import java.math.BigDecimal;
 
+import com.paynest.shared.RandFormat;
+
 /**
  * Simulated deferred payment. An approved purchase increases the customer's
  * outstanding BNPL balance; settlement happens outside the checkout flow.
