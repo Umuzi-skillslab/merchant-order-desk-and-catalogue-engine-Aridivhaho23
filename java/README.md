@@ -87,8 +87,7 @@ After extracting the ZIP file, open a terminal in the directory that contains th
 `merchant-order-desk-and-catalogue-engine-Aridivhaho23` folder. Run:
 
 ```bash
-cd merchant-order-desk-and-catalogue-engine-Aridivhaho23
-cd java
+cd merchant-order-desk-and-catalogue-engine-Aridivhaho23/java
 mvn clean test
 ```
 
