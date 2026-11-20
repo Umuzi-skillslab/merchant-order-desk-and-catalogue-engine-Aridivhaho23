@@ -1,9 +1,10 @@
 package com.paynest.payment.rails;
 
-import com.paynest.payment.PaymentMethod;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+
+import com.paynest.payment.PaymentMethod;
 
 /**
  * Combines multiple payment instruments for one checkout.

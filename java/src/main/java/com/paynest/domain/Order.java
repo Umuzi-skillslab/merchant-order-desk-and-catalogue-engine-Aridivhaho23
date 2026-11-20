@@ -7,9 +7,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import com.paynest.checkout.PaymentStatus;
-
-
 /**
  * A customer's order: its customer, its lines, its totals, and its payment state.
  *

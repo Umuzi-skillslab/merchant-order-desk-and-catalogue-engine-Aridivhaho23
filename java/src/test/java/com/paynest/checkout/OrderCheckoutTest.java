@@ -1,17 +1,30 @@
 package com.paynest.checkout;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 
-import com.paynest.payment.*;
-import com.paynest.payment.rails.*;
-import com.paynest.domain.*;
+import com.paynest.domain.Customer;
+import com.paynest.domain.Order;
+import com.paynest.domain.PaymentStatus;
+import com.paynest.domain.Product;
+import com.paynest.payment.PaymentMethod;
+import com.paynest.payment.PaymentProcessing;
+import com.paynest.payment.PaymentProcessor;
+import com.paynest.payment.rails.BitcoinPayment;
+import com.paynest.payment.rails.BuyNowPayLaterPayment;
+import com.paynest.payment.rails.CardPayment;
+import com.paynest.payment.rails.EftPayment;
+import com.paynest.payment.rails.SplitPayment;
+import com.paynest.payment.rails.VoucherPayment;
+import com.paynest.payment.rails.WalletPayment;
 
 
 /** Checkout use-case integration tests: Order itself does not perform checkout. */

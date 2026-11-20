@@ -17,13 +17,13 @@ java/
     │   ├── app/
     │   │   └── PayNestApplication
     │   ├── checkout/
-    │   │   ├── CheckoutService
-    │   │   └── PaymentStatus
+    │   │   └── CheckoutService
     │   ├── domain/
     │   │   ├── Customer
     │   │   ├── InsufficientStockException
     │   │   ├── Order
     │   │   ├── OrderItem
+    │   │   ├── PaymentStatus
     │   │   └── Product
     │   ├── payment/
     │   │   ├── PaymentMethod
@@ -67,6 +67,7 @@ java/
 - `PaymentMethod` defines the common payment contract: `boolean processPayment(double amount)` and `String getPaymentType()`.
 - `AbstractPaymentMethod` provides shared payment-label handling and amount validation. Individual payment classes implement their own payment rules.
 - The application demonstrates seven payment options: `CardPayment`, `EftPayment`, `WalletPayment`, `VoucherPayment`, `BitcoinPayment`, `BuyNowPayLaterPayment` and `SplitPayment`.
+- `EftPayment` runs in one of two `EftMode` values, `STANDARD` (the default) or `INSTANT`. The payment label stays `EFT` in both, and the demonstration runs both modes.
 - `SplitPayment` is a composite payment method that combines allocations across multiple payment instruments.
 - Card details are validated for card number format, Luhn checksum, supported network, expiry date and CVV. Only the last four card-number digits are retained.
 - `CheckoutService` coordinates checkout, while `PaymentProcessor` processes the selected `PaymentMethod`. The `Order` class remains responsible for order state and totals.

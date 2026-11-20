@@ -14,6 +14,7 @@ import com.paynest.payment.rails.BitcoinPayment;
 import com.paynest.payment.rails.BuyNowPayLaterPayment;
 import com.paynest.payment.rails.CardDetails;
 import com.paynest.payment.rails.CardPayment;
+import com.paynest.payment.rails.EftMode;
 import com.paynest.payment.rails.EftPayment;
 import com.paynest.payment.rails.SplitPayment;
 import com.paynest.payment.rails.VoucherPayment;
@@ -48,19 +49,7 @@ public final class PayNestApplication {
         service.addToOrder(order, laptop, 1);
         service.addToOrder(order, mouse, 3);
         service.addToOrder(order, keyboard, 2);
-        
-        /*try {
-            service.addToOrder(order, mouse, 100);
-        } catch (InsufficientStockException ex) {
-            System.out.println("Rejected as expected: " + ex.getMessage());
-        }*/
         return order;
-    }
-
-    /** Convenience entry point for the payment-rail demonstration. */
-    public static void demonstrateAllPaymentMethods()
-    {
-        demonstrateAllPaymentMethods(new CheckoutService(new PaymentProcessor()), buildOrder(1));
     }
 
     /**
@@ -71,6 +60,7 @@ public final class PayNestApplication {
         List<PaymentMethod> methods = List.of(
                 new CardPayment(new CardDetails("4111 1111 1111 1111", YearMonth.now().plusYears(2), "123")),
                 new EftPayment(),
+                new EftPayment(EftMode.INSTANT),
                 new WalletPayment(100_000.00),
                 new VoucherPayment("DEMO-VOUCHER-1234", 100_000.00),
                 new BitcoinPayment("bc1qdemodestinationaddress", () -> new BigDecimal("1000000.00")),
